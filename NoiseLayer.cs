@@ -90,16 +90,16 @@ namespace _32DNoiseGen
         {
             for (int i = 0; i < outArray.Length; i++)
             {
-                if(!inverted)
-                    combine[i] *= amplitude;
-                else
-                    combine[i] *= -amplitude;
-
                 if(oneMinus)
                     combine[i] = 1.0f - combine[i];
 
                 if(absolute)
                     combine[i] = Math.Abs(combine[i]);
+
+                if (!inverted)
+                    combine[i] *= amplitude;
+                else
+                    combine[i] *= -amplitude;
 
                 switch (combineType)
                 {

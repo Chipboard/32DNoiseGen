@@ -42,6 +42,7 @@ namespace _32DNoiseGen
             form.FBMGain.ValueChanged += FBMGainChanged;
             form.FBMLacunarity.ValueChanged += FBMLacunarityChanged;
             form.FBMOctaves.ValueChanged += FBMOctavesChanged;
+            form.strip_save.Click += Save;
 
             form.previewDepthBar.Minimum = 0;
             form.previewDepthBar.Maximum = previewResolution;
@@ -69,6 +70,11 @@ namespace _32DNoiseGen
             UpdateNoiseControls(false);
 
             Application.Run(form);
+        }
+
+        private static void Save(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private static void SeedChanged(object sender, EventArgs e)
@@ -266,8 +272,8 @@ namespace _32DNoiseGen
                 if(!form.FBM.Checked)
                 {
                     form.FBMGain.Enabled = false;
-                    form.FBMLacunarity.Enabled= false;
-                    form.FBMOctaves.Enabled= false;
+                    form.FBMLacunarity.Enabled = false;
+                    form.FBMOctaves.Enabled = false;
                 }
             }
         }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NoiseForm));
             this.noiseList = new System.Windows.Forms.CheckedListBox();
             this.addLayerButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -59,7 +60,13 @@
             this.FBMOctaves = new System.Windows.Forms.NumericUpDown();
             this.seed = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.strip_save = new System.Windows.Forms.ToolStripMenuItem();
+            this.strip_saveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.strip_load = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.strip_export2DSequence = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.previewImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.previewDepthBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.amplitude)).BeginInit();
@@ -68,19 +75,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.FBMGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FBMOctaves)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.seed)).BeginInit();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // noiseList
             // 
             this.noiseList.FormattingEnabled = true;
-            this.noiseList.Location = new System.Drawing.Point(13, 47);
+            this.noiseList.Location = new System.Drawing.Point(13, 70);
             this.noiseList.Name = "noiseList";
             this.noiseList.Size = new System.Drawing.Size(137, 327);
             this.noiseList.TabIndex = 0;
             // 
             // addLayerButton
             // 
-            this.addLayerButton.Location = new System.Drawing.Point(13, 380);
+            this.addLayerButton.Location = new System.Drawing.Point(13, 403);
             this.addLayerButton.Name = "addLayerButton";
             this.addLayerButton.Size = new System.Drawing.Size(138, 27);
             this.addLayerButton.TabIndex = 1;
@@ -91,7 +99,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 24);
+            this.label1.Location = new System.Drawing.Point(12, 47);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(103, 17);
             this.label1.TabIndex = 2;
@@ -100,7 +108,7 @@
             // 
             // removeLayerButton
             // 
-            this.removeLayerButton.Location = new System.Drawing.Point(12, 413);
+            this.removeLayerButton.Location = new System.Drawing.Point(12, 436);
             this.removeLayerButton.Name = "removeLayerButton";
             this.removeLayerButton.Size = new System.Drawing.Size(139, 27);
             this.removeLayerButton.TabIndex = 3;
@@ -111,7 +119,7 @@
             // 
             this.previewImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.previewImage.Image = global::_32DNoiseGen.Properties.Resources.PreviewGrid;
-            this.previewImage.Location = new System.Drawing.Point(157, 12);
+            this.previewImage.Location = new System.Drawing.Point(157, 35);
             this.previewImage.Name = "previewImage";
             this.previewImage.Size = new System.Drawing.Size(428, 428);
             this.previewImage.TabIndex = 4;
@@ -119,7 +127,7 @@
             // 
             // previewDepthBar
             // 
-            this.previewDepthBar.Location = new System.Drawing.Point(591, 413);
+            this.previewDepthBar.Location = new System.Drawing.Point(591, 436);
             this.previewDepthBar.Name = "previewDepthBar";
             this.previewDepthBar.Size = new System.Drawing.Size(196, 56);
             this.previewDepthBar.TabIndex = 5;
@@ -127,7 +135,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(647, 394);
+            this.label2.Location = new System.Drawing.Point(647, 417);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 16);
             this.label2.TabIndex = 6;
@@ -137,7 +145,7 @@
             // noiseType
             // 
             this.noiseType.FormattingEnabled = true;
-            this.noiseType.Location = new System.Drawing.Point(591, 28);
+            this.noiseType.Location = new System.Drawing.Point(591, 51);
             this.noiseType.Name = "noiseType";
             this.noiseType.Size = new System.Drawing.Size(197, 24);
             this.noiseType.TabIndex = 7;
@@ -145,7 +153,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(647, 9);
+            this.label3.Location = new System.Drawing.Point(588, 32);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(78, 16);
             this.label3.TabIndex = 8;
@@ -155,7 +163,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(647, 55);
+            this.label4.Location = new System.Drawing.Point(588, 78);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(96, 16);
             this.label4.TabIndex = 10;
@@ -165,7 +173,7 @@
             // combineType
             // 
             this.combineType.FormattingEnabled = true;
-            this.combineType.Location = new System.Drawing.Point(591, 74);
+            this.combineType.Location = new System.Drawing.Point(591, 97);
             this.combineType.Name = "combineType";
             this.combineType.Size = new System.Drawing.Size(197, 24);
             this.combineType.TabIndex = 9;
@@ -173,7 +181,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(588, 106);
+            this.label5.Location = new System.Drawing.Point(588, 129);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(70, 16);
             this.label5.TabIndex = 13;
@@ -183,7 +191,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(588, 136);
+            this.label6.Location = new System.Drawing.Point(588, 159);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 16);
             this.label6.TabIndex = 15;
@@ -197,7 +205,7 @@
             0,
             0,
             131072});
-            this.amplitude.Location = new System.Drawing.Point(668, 104);
+            this.amplitude.Location = new System.Drawing.Point(668, 127);
             this.amplitude.Name = "amplitude";
             this.amplitude.Size = new System.Drawing.Size(120, 22);
             this.amplitude.TabIndex = 16;
@@ -209,7 +217,7 @@
             0,
             0,
             196608});
-            this.frequency.Location = new System.Drawing.Point(668, 134);
+            this.frequency.Location = new System.Drawing.Point(668, 157);
             this.frequency.Name = "frequency";
             this.frequency.Size = new System.Drawing.Size(120, 22);
             this.frequency.TabIndex = 17;
@@ -217,7 +225,7 @@
             // inverted
             // 
             this.inverted.AutoSize = true;
-            this.inverted.Location = new System.Drawing.Point(769, 190);
+            this.inverted.Location = new System.Drawing.Point(769, 213);
             this.inverted.Name = "inverted";
             this.inverted.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.inverted.Size = new System.Drawing.Size(18, 17);
@@ -227,7 +235,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(588, 189);
+            this.label7.Location = new System.Drawing.Point(588, 212);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(55, 16);
             this.label7.TabIndex = 19;
@@ -237,7 +245,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(588, 214);
+            this.label8.Location = new System.Drawing.Point(588, 237);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(73, 16);
             this.label8.TabIndex = 21;
@@ -247,7 +255,7 @@
             // oneMinus
             // 
             this.oneMinus.AutoSize = true;
-            this.oneMinus.Location = new System.Drawing.Point(769, 215);
+            this.oneMinus.Location = new System.Drawing.Point(769, 238);
             this.oneMinus.Name = "oneMinus";
             this.oneMinus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.oneMinus.Size = new System.Drawing.Size(18, 17);
@@ -257,7 +265,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(588, 237);
+            this.label9.Location = new System.Drawing.Point(588, 260);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(63, 16);
             this.label9.TabIndex = 23;
@@ -267,7 +275,7 @@
             // absolute
             // 
             this.absolute.AutoSize = true;
-            this.absolute.Location = new System.Drawing.Point(769, 238);
+            this.absolute.Location = new System.Drawing.Point(769, 261);
             this.absolute.Name = "absolute";
             this.absolute.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.absolute.Size = new System.Drawing.Size(18, 17);
@@ -281,7 +289,7 @@
             0,
             0,
             65536});
-            this.FBMLacunarity.Location = new System.Drawing.Point(668, 314);
+            this.FBMLacunarity.Location = new System.Drawing.Point(668, 337);
             this.FBMLacunarity.Name = "FBMLacunarity";
             this.FBMLacunarity.Size = new System.Drawing.Size(120, 22);
             this.FBMLacunarity.TabIndex = 27;
@@ -293,7 +301,7 @@
             0,
             0,
             65536});
-            this.FBMGain.Location = new System.Drawing.Point(668, 284);
+            this.FBMGain.Location = new System.Drawing.Point(668, 307);
             this.FBMGain.Name = "FBMGain";
             this.FBMGain.Size = new System.Drawing.Size(120, 22);
             this.FBMGain.TabIndex = 26;
@@ -301,7 +309,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(589, 316);
+            this.label10.Location = new System.Drawing.Point(589, 339);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(71, 16);
             this.label10.TabIndex = 25;
@@ -311,7 +319,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(589, 286);
+            this.label11.Location = new System.Drawing.Point(589, 309);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(38, 16);
             this.label11.TabIndex = 24;
@@ -321,7 +329,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(589, 260);
+            this.label12.Location = new System.Drawing.Point(589, 283);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(38, 16);
             this.label12.TabIndex = 29;
@@ -331,7 +339,7 @@
             // FBM
             // 
             this.FBM.AutoSize = true;
-            this.FBM.Location = new System.Drawing.Point(769, 261);
+            this.FBM.Location = new System.Drawing.Point(769, 284);
             this.FBM.Name = "FBM";
             this.FBM.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.FBM.Size = new System.Drawing.Size(18, 17);
@@ -341,7 +349,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(589, 344);
+            this.label13.Location = new System.Drawing.Point(589, 367);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(60, 16);
             this.label13.TabIndex = 30;
@@ -350,7 +358,7 @@
             // 
             // FBMOctaves
             // 
-            this.FBMOctaves.Location = new System.Drawing.Point(668, 342);
+            this.FBMOctaves.Location = new System.Drawing.Point(668, 365);
             this.FBMOctaves.Minimum = new decimal(new int[] {
             1,
             0,
@@ -367,7 +375,7 @@
             // 
             // seed
             // 
-            this.seed.Location = new System.Drawing.Point(668, 162);
+            this.seed.Location = new System.Drawing.Point(668, 185);
             this.seed.Maximum = new decimal(new int[] {
             -1304428545,
             434162106,
@@ -385,28 +393,77 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(588, 164);
+            this.label14.Location = new System.Drawing.Point(588, 187);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(43, 16);
             this.label14.TabIndex = 32;
             this.label14.Text = "Seed:";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // toolStrip1
+            // toolStrip
             // 
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(800, 25);
-            this.toolStrip1.TabIndex = 34;
-            this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButton1});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(800, 27);
+            this.toolStrip.TabIndex = 34;
+            this.toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.strip_save,
+            this.strip_saveAs,
+            this.strip_load,
+            this.exportToolStripMenuItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(46, 24);
+            this.toolStripDropDownButton1.Text = "File";
+            this.toolStripDropDownButton1.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
+            // 
+            // strip_save
+            // 
+            this.strip_save.Name = "strip_save";
+            this.strip_save.Size = new System.Drawing.Size(224, 26);
+            this.strip_save.Text = "Save";
+            // 
+            // strip_saveAs
+            // 
+            this.strip_saveAs.Name = "strip_saveAs";
+            this.strip_saveAs.Size = new System.Drawing.Size(224, 26);
+            this.strip_saveAs.Text = "Save As";
+            // 
+            // strip_load
+            // 
+            this.strip_load.Name = "strip_load";
+            this.strip_load.Size = new System.Drawing.Size(224, 26);
+            this.strip_load.Text = "Load";
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.strip_export2DSequence});
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.exportToolStripMenuItem.Text = "Export As";
+            // 
+            // strip_export2DSequence
+            // 
+            this.strip_export2DSequence.Name = "strip_export2DSequence";
+            this.strip_export2DSequence.Size = new System.Drawing.Size(224, 26);
+            this.strip_export2DSequence.Text = "2D Sequence";
             // 
             // NoiseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.toolStrip1);
+            this.ClientSize = new System.Drawing.Size(800, 475);
+            this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.seed);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.FBMOctaves);
@@ -448,6 +505,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.FBMGain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FBMOctaves)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.seed)).EndInit();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -485,7 +544,13 @@
         public System.Windows.Forms.NumericUpDown FBMOctaves;
         public System.Windows.Forms.NumericUpDown seed;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        public System.Windows.Forms.ToolStrip toolStrip;
+        public System.Windows.Forms.ToolStripMenuItem strip_save;
+        public System.Windows.Forms.ToolStripMenuItem strip_saveAs;
+        public System.Windows.Forms.ToolStripMenuItem strip_load;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem strip_export2DSequence;
     }
 }
 
