@@ -70,6 +70,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Export Form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Export Form.Designer.cs">
+      <DependentUpon>Export Form.cs</DependentUpon>
+    </Compile>
     <Compile Include="FastNoise2.cs" />
     <Compile Include="NoiseForm.cs">
       <SubType>Form</SubType>
@@ -80,6 +86,9 @@
     <Compile Include="NoiseLayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Export Form.resx">
+      <DependentUpon>Export Form.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NoiseForm.resx">
       <DependentUpon>NoiseForm.cs</DependentUpon>
     </EmbeddedResource>

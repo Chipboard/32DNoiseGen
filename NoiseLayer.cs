@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,13 +27,13 @@ namespace _32DNoiseGen
 
         FastNoise noise;
 
-        public NoiseLayer(string noiseType = "Perlin", float frequency = 0.01f, float amplitude = 1.0f, int seed = 777, bool enabled = true)
+        public NoiseLayer(string noiseType = "Perlin", float frequency = 0.01f, float amplitude = 1.0f)
         {
             this.amplitude = amplitude;
             this.frequency = frequency;
-            this.seed = seed;
-            this.enabled = enabled;
 
+            seed = Program.random.Next(int.MinValue, int.MaxValue);
+            enabled = true;
             FBMGain = 0.4f;
             FBMLacunarity = 3.0f;
             FBMOctaves = 8;
@@ -81,11 +82,13 @@ namespace _32DNoiseGen
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GetNoise3D(ref float[] array, int xStart, int yStart, int zStart, int xSize, int ySize, int zSize)
         {
             noise.GenUniformGrid3D(array, xStart, yStart, zStart, xSize, ySize, zSize, frequency, seed);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CombineNoise(ref float[] outArray, float[] combine)
         {
             for (int i = 0; i < outArray.Length; i++)

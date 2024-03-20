@@ -63,10 +63,10 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.strip_save = new System.Windows.Forms.ToolStripMenuItem();
-            this.strip_saveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.strip_load = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.strip_export2DSequence = new System.Windows.Forms.ToolStripMenuItem();
+            this.strip_export = new System.Windows.Forms.ToolStripMenuItem();
+            this.label15 = new System.Windows.Forms.Label();
+            this.tilingMode = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.previewImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.previewDepthBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.amplitude)).BeginInit();
@@ -81,9 +81,9 @@
             // noiseList
             // 
             this.noiseList.FormattingEnabled = true;
-            this.noiseList.Location = new System.Drawing.Point(13, 70);
+            this.noiseList.Location = new System.Drawing.Point(13, 104);
             this.noiseList.Name = "noiseList";
-            this.noiseList.Size = new System.Drawing.Size(137, 327);
+            this.noiseList.Size = new System.Drawing.Size(137, 293);
             this.noiseList.TabIndex = 0;
             // 
             // addLayerButton
@@ -99,7 +99,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 47);
+            this.label1.Location = new System.Drawing.Point(9, 84);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(103, 17);
             this.label1.TabIndex = 2;
@@ -122,8 +122,10 @@
             this.previewImage.Location = new System.Drawing.Point(157, 35);
             this.previewImage.Name = "previewImage";
             this.previewImage.Size = new System.Drawing.Size(428, 428);
+            this.previewImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.previewImage.TabIndex = 4;
             this.previewImage.TabStop = false;
+            this.previewImage.Click += new System.EventHandler(this.previewImage_Click);
             // 
             // previewDepthBar
             // 
@@ -407,7 +409,7 @@
             this.toolStripDropDownButton1});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(800, 27);
+            this.toolStrip.Size = new System.Drawing.Size(800, 31);
             this.toolStrip.TabIndex = 34;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -416,53 +418,60 @@
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.strip_save,
-            this.strip_saveAs,
             this.strip_load,
-            this.exportToolStripMenuItem});
+            this.strip_export});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(46, 24);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(46, 28);
             this.toolStripDropDownButton1.Text = "File";
             this.toolStripDropDownButton1.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 
             // strip_save
             // 
             this.strip_save.Name = "strip_save";
-            this.strip_save.Size = new System.Drawing.Size(224, 26);
+            this.strip_save.Size = new System.Drawing.Size(135, 26);
             this.strip_save.Text = "Save";
-            // 
-            // strip_saveAs
-            // 
-            this.strip_saveAs.Name = "strip_saveAs";
-            this.strip_saveAs.Size = new System.Drawing.Size(224, 26);
-            this.strip_saveAs.Text = "Save As";
             // 
             // strip_load
             // 
             this.strip_load.Name = "strip_load";
-            this.strip_load.Size = new System.Drawing.Size(224, 26);
+            this.strip_load.Size = new System.Drawing.Size(135, 26);
             this.strip_load.Text = "Load";
             // 
-            // exportToolStripMenuItem
+            // strip_export
             // 
-            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.strip_export2DSequence});
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.exportToolStripMenuItem.Text = "Export As";
+            this.strip_export.Name = "strip_export";
+            this.strip_export.Size = new System.Drawing.Size(135, 26);
+            this.strip_export.Text = "Export";
             // 
-            // strip_export2DSequence
+            // label15
             // 
-            this.strip_export2DSequence.Name = "strip_export2DSequence";
-            this.strip_export2DSequence.Size = new System.Drawing.Size(224, 26);
-            this.strip_export2DSequence.Text = "2D Sequence";
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(9, 32);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(78, 16);
+            this.label15.TabIndex = 36;
+            this.label15.Text = "Tiling Mode";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tilingMode
+            // 
+            this.tilingMode.FormattingEnabled = true;
+            this.tilingMode.Location = new System.Drawing.Point(12, 51);
+            this.tilingMode.Name = "tilingMode";
+            this.tilingMode.Size = new System.Drawing.Size(139, 24);
+            this.tilingMode.TabIndex = 35;
             // 
             // NoiseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(800, 475);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.tilingMode);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.seed);
             this.Controls.Add(this.label14);
@@ -495,8 +504,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.addLayerButton);
             this.Controls.Add(this.noiseList);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "NoiseForm";
             this.Text = "32D Noise Creator";
+            this.Load += new System.EventHandler(this.NoiseForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.previewImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.previewDepthBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.amplitude)).EndInit();
@@ -547,10 +558,10 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         public System.Windows.Forms.ToolStrip toolStrip;
         public System.Windows.Forms.ToolStripMenuItem strip_save;
-        public System.Windows.Forms.ToolStripMenuItem strip_saveAs;
         public System.Windows.Forms.ToolStripMenuItem strip_load;
-        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-        public System.Windows.Forms.ToolStripMenuItem strip_export2DSequence;
+        public System.Windows.Forms.ToolStripMenuItem strip_export;
+        private System.Windows.Forms.Label label15;
+        public System.Windows.Forms.ComboBox tilingMode;
     }
 }
 

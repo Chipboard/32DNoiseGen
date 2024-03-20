@@ -16,5 +16,16 @@ namespace _32DNoiseGen
         {
             InitializeComponent();
         }
+
+        private void NoiseForm_Load(object sender, EventArgs e)
+        {
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        }
+
+        private void previewImage_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetImage(previewImage.Image);
+        }
     }
 }

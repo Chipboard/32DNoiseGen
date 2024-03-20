@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,11 +14,14 @@ namespace _32DNoiseGen
     internal static class Program
     {
         static NoiseForm form;
+        static Export_Form exportForm;
         static Bitmap previewImage;
 
         const int previewResolution = 512;
 
-        static Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
+        static readonly Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
+
+        public static Random random = new Random();
 
         [STAThread]
         static void Main()
@@ -43,6 +47,8 @@ namespace _32DNoiseGen
             form.FBMLacunarity.ValueChanged += FBMLacunarityChanged;
             form.FBMOctaves.ValueChanged += FBMOctavesChanged;
             form.strip_save.Click += Save;
+            form.strip_load.Click += Load;
+            form.strip_export.Click += Export;
 
             form.previewDepthBar.Minimum = 0;
             form.previewDepthBar.Maximum = previewResolution;
@@ -56,7 +62,16 @@ namespace _32DNoiseGen
                 "CellularDistance"
             });
 
-            foreach(CombineType type in Enum.GetValues(typeof(CombineType)))
+            form.tilingMode.Items.AddRange(new string[]
+            {
+                "None",
+                "Mirrored",
+                "Edge Blend"
+            });
+
+            form.tilingMode.SelectedIndex = 0;
+
+            foreach (CombineType type in Enum.GetValues(typeof(CombineType)))
             {
                 form.combineType.Items.Add(type);
             }
@@ -70,6 +85,18 @@ namespace _32DNoiseGen
             UpdateNoiseControls(false);
 
             Application.Run(form);
+        }
+
+        private static void Export(object sender, EventArgs e)
+        {
+            exportForm?.Close();
+            exportForm = new Export_Form();
+            exportForm.Show();
+        }
+
+        private static void Load(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private static void Save(object sender, EventArgs e)
@@ -253,7 +280,7 @@ namespace _32DNoiseGen
             form.FBMOctaves.Enabled = enabled;
             form.seed.Enabled = enabled;
 
-            if(enabled)
+            if (enabled)
             {
                 NoiseLayer activeLayer = GetActiveLayer();
                 form.noiseType.Text = activeLayer.noiseType;
@@ -269,7 +296,7 @@ namespace _32DNoiseGen
                 form.FBMOctaves.Value = activeLayer.FBMOctaves;
                 form.seed.Value = activeLayer.seed;
 
-                if(!form.FBM.Checked)
+                if (!form.FBM.Checked)
                 {
                     form.FBMGain.Enabled = false;
                     form.FBMLacunarity.Enabled = false;
@@ -308,8 +335,65 @@ namespace _32DNoiseGen
             UpdatePreview();
         }
 
+        private static float[] ApplyTiling(float[] data)
+        {
+            float[] result = new float[data.Length];
+
+            int resolution = (int)Math.Sqrt(data.Length);
+
+
+            switch (form.tilingMode.SelectedItem.ToString())
+            {
+                case "Mirrored":
+                    for (int x = 0; x < resolution; x++)
+                    {
+                        for (int y = 0; y < resolution; y++)
+                        {
+
+                        }
+                    }
+                    break;
+
+                case "Edge Blend":
+                    for (int x = 0; x < resolution; x++)
+                    {
+                        for (int y = 0; y < resolution; y++)
+                        {
+
+                        }
+                    }
+                    break;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Generates the noise for specified layer and combines it with the supplied array using the layer's settings.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="noiseLayer"></param>
+        /// <param name="zStart"></param>
+        /// <param name="zCount"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void GetNoise(ref float[] data, NoiseLayer noiseLayer, int zStart, int zCount = 1)
+        {
+            float[] noiseData = new float[previewResolution * previewResolution];
+            noiseLayer.GetNoise3D(ref noiseData, 0, 0, zStart, previewResolution, previewResolution, zCount);
+            noiseLayer.CombineNoise(ref data, noiseData);
+        } 
+
+        /// <summary>
+        /// Updates the preview image for the current noise setup.
+        /// </summary>
         private static void UpdatePreview()
         {
+            if(noiseLayers.Count == 0)
+            {
+                form.previewImage.Image = Properties.Resources.PreviewGrid;
+                return;
+            }
+
             float depthScrollFactor = (float)form.previewDepthBar.Value / form.previewDepthBar.Maximum;
             int zStart = (int)Math.Round(depthScrollFactor * previewResolution);
 
@@ -319,11 +403,12 @@ namespace _32DNoiseGen
             {
                 if (form.noiseList.GetItemChecked(index++))
                 {
-                    float[] noiseData = new float[previewResolution * previewResolution];
-                    v.Value.GetNoise3D(ref noiseData, 0, 0, zStart, previewResolution, previewResolution, 1);
-                    v.Value.CombineNoise(ref noiseTotal, noiseData);
+                    GetNoise(ref noiseTotal, v.Value, zStart);
                 }
             }
+
+            if(form.tilingMode.SelectedItem.ToString() != "None")
+                noiseTotal = ApplyTiling(noiseTotal);
 
             /*MessageBox.Show(noiseData[256 * 256].ToString());
             for(int x = 0; x < previewResolution; x++)
@@ -340,6 +425,12 @@ namespace _32DNoiseGen
             form.previewImage.Update();
         }
 
+        /// <summary>
+        /// Sets a bitmap from float[] 0.0 - 1.0 grayscale data.
+        /// </summary>
+        /// <param name="grayscaleData"></param>
+        /// <param name="bitmap"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void SetGrayscaleBitmap(float[] grayscaleData, Bitmap bitmap)
         {
             // Lock the bitmap bits for direct access
