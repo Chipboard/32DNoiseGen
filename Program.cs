@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static _32DNoiseGen.NoiseLayer;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace _32DNoiseGen
 {
@@ -19,7 +22,7 @@ namespace _32DNoiseGen
 
         const int previewResolution = 512;
 
-        static readonly Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
+        static Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
 
         public static Random random = new Random();
 
@@ -103,12 +106,67 @@ namespace _32DNoiseGen
 
         private static void Load(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            OpenFileDialog openDialog = new OpenFileDialog
+            {
+                InitialDirectory = Application.ExecutablePath,
+                Title = "Load Layers",
+
+                CheckFileExists = true,
+                CheckPathExists = true,
+
+                DefaultExt = "32D",
+                Filter = "32D files (*.32D)|*.32D",
+                FilterIndex = 2,
+                RestoreDirectory = true,
+            };
+
+            if (openDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (FileStream stream = new FileStream(openDialog.FileName, FileMode.Open))
+                    {
+                        BinaryFormatter bin = new BinaryFormatter();
+                        noiseLayers = (Dictionary<string, NoiseLayer>)bin.Deserialize(stream);
+                    }
+                }
+                catch (IOException)
+                {
+                }
+            }
         }
 
         private static void Save(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            SaveFileDialog saveDialog = new SaveFileDialog
+            {
+                InitialDirectory = Application.ExecutablePath,
+                Title = "Save Layers",
+
+                CheckFileExists = false,
+                CheckPathExists = true,
+
+                DefaultExt = "txt",
+                Filter = "32D files (*.32D)|*.32D",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
+
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using(FileStream stream = new FileStream(saveDialog.FileName, FileMode.Create))
+                    {
+                        BinaryFormatter bin = new BinaryFormatter();
+                        bin.Serialize(stream, noiseLayers);
+
+                        // TODO: Create noise settings class/struct and serialize it. We shouldn't be serializing fastnoise per layer anyways.
+                    }
+                } catch (IOException)
+                {
+                }
+            }
         }
 
         private static void SeedChanged(object sender, EventArgs e)

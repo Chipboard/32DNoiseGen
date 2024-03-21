@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace _32DNoiseGen
 {
+    [Serializable]
     public class NoiseLayer
     {
         public bool enabled;
@@ -131,6 +132,14 @@ namespace _32DNoiseGen
                     case CombineType.Modulus:
                         outArray[i] %= combine[i];
                         break;
+
+                    case CombineType.Min:
+                        outArray[i] = Math.Min(outArray[i], combine[i]);
+                        break;
+
+                    case CombineType.Max:
+                        outArray[i] = Math.Max(outArray[i], combine[i]);
+                        break;
                 }
             }
         }
@@ -142,7 +151,9 @@ namespace _32DNoiseGen
             Subtract,
             Subtractive,
             Multiply,
-            Modulus
+            Modulus,
+            Min,
+            Max
         }
     }
 }
