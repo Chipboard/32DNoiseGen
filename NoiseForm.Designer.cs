@@ -118,6 +118,7 @@
             // previewImage
             // 
             this.previewImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.previewImage.Cursor = System.Windows.Forms.Cursors.Hand;
             this.previewImage.Image = global::_32DNoiseGen.Properties.Resources.PreviewGrid;
             this.previewImage.Location = new System.Drawing.Point(157, 35);
             this.previewImage.Name = "previewImage";
@@ -125,6 +126,7 @@
             this.previewImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.previewImage.TabIndex = 4;
             this.previewImage.TabStop = false;
+            this.previewImage.WaitOnLoad = true;
             this.previewImage.Click += new System.EventHandler(this.previewImage_Click);
             // 
             // previewDepthBar
@@ -409,7 +411,7 @@
             this.toolStripDropDownButton1});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(800, 31);
+            this.toolStrip.Size = new System.Drawing.Size(800, 27);
             this.toolStrip.TabIndex = 34;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -423,7 +425,7 @@
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(46, 28);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(46, 24);
             this.toolStripDropDownButton1.Text = "File";
             this.toolStripDropDownButton1.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 

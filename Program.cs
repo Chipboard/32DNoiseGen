@@ -46,6 +46,7 @@ namespace _32DNoiseGen
             form.FBMGain.ValueChanged += FBMGainChanged;
             form.FBMLacunarity.ValueChanged += FBMLacunarityChanged;
             form.FBMOctaves.ValueChanged += FBMOctavesChanged;
+            form.tilingMode.SelectedValueChanged += tilingModechanged;
             form.strip_save.Click += Save;
             form.strip_load.Click += Load;
             form.strip_export.Click += Export;
@@ -65,8 +66,9 @@ namespace _32DNoiseGen
             form.tilingMode.Items.AddRange(new string[]
             {
                 "None",
-                "Mirrored",
-                "Edge Blend"
+                "Mirrored Edge (Round)",
+                "Mirrored Edge (Square)",
+                "Mirrored"
             });
 
             form.tilingMode.SelectedIndex = 0;
@@ -85,6 +87,11 @@ namespace _32DNoiseGen
             UpdateNoiseControls(false);
 
             Application.Run(form);
+        }
+
+        private static void tilingModechanged(object sender, EventArgs e)
+        {
+            UpdatePreview();
         }
 
         private static void Export(object sender, EventArgs e)
@@ -335,37 +342,88 @@ namespace _32DNoiseGen
             UpdatePreview();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float[] ApplyTiling(float[] data)
         {
             float[] result = new float[data.Length];
-
             int resolution = (int)Math.Sqrt(data.Length);
-
+            int halfResolution = resolution / 2;
 
             switch (form.tilingMode.SelectedItem.ToString())
             {
+                case "Mirrored Edge (Round)":
+                    for (int x = 0; x < resolution; x++)
+                    {
+                        for (int y = 0; y < resolution; y++)
+                        {
+                            int currentIndex = y * resolution + x;
+
+                            // Calculate square distance from the center
+                            float dx = x - halfResolution;
+                            float dy = y - halfResolution;
+                            float squareDistanceFromCenter = dx * dx + dy * dy;
+
+                            // Normalize distance to range [0, 1]
+                            float normalizedDistance = squareDistanceFromCenter / (halfResolution * halfResolution);
+
+                            // Clamp normalized distance to range [0, 1]
+                            float blendFactor = Math.Min(normalizedDistance, 1.0f);
+
+                            int mx = x < halfResolution ? x : resolution - 1 - x;
+                            int my = y < halfResolution ? y : resolution - 1 - y;
+
+                            int oppositeIndex = my * resolution + mx;
+
+                            result[currentIndex] = Lerp(data[currentIndex], data[oppositeIndex], blendFactor);
+                        }
+                    }
+                    break;
+
+                case "Mirrored Edge (Square)":
+                    for (int x = 0; x < resolution; x++)
+                    {
+                        for (int y = 0; y < resolution; y++)
+                        {
+                            int currentIndex = y * resolution + x;
+
+                            float dx = x - halfResolution;
+                            float dy = y - halfResolution;
+                            float squareDistanceFromCenter = Math.Max(dx * dx, dy * dy);
+                            float normalizedDistance = squareDistanceFromCenter / (halfResolution * halfResolution);
+
+                            // Clamp normalized distance to range [0, 1]
+                            float blendFactor = Math.Min(normalizedDistance, 1.0f);
+
+                            int mx = x < halfResolution ? x : resolution - 1 - x;
+                            int my = y < halfResolution ? y : resolution - 1 - y;
+
+                            int oppositeIndex = my * resolution + mx;
+
+                            result[currentIndex] = Lerp(data[currentIndex], data[oppositeIndex], blendFactor);
+                        }
+                    }
+                    break;
+
                 case "Mirrored":
                     for (int x = 0; x < resolution; x++)
                     {
                         for (int y = 0; y < resolution; y++)
                         {
-
-                        }
-                    }
-                    break;
-
-                case "Edge Blend":
-                    for (int x = 0; x < resolution; x++)
-                    {
-                        for (int y = 0; y < resolution; y++)
-                        {
-
+                            int mx = x < resolution / 2 ? x : resolution - 1 - x;
+                            int my = y < resolution / 2 ? y : resolution - 1 - y;
+                            result[y * resolution + x] = data[(my * 2) * resolution + (mx * 2)];
                         }
                     }
                     break;
             }
 
             return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static float Lerp(float a, float b, float f)
+        {
+            return a * (1.0f - f) + (b * f);
         }
 
         /// <summary>

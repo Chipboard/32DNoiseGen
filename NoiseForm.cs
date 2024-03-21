@@ -12,6 +12,8 @@ namespace _32DNoiseGen
 {
     public partial class NoiseForm : Form
     {
+        ToolTip imageToolTip;
+
         public NoiseForm()
         {
             InitializeComponent();
@@ -21,11 +23,23 @@ namespace _32DNoiseGen
         {
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+            imageToolTip = new ToolTip
+            {
+                AutoPopDelay = 3000,
+                AutomaticDelay = 0,
+                InitialDelay = 0,
+                ReshowDelay = 0,
+                ShowAlways = true
+            };
+
+            imageToolTip.SetToolTip(previewImage, "Click to copy");
         }
 
         private void previewImage_Click(object sender, EventArgs e)
         {
             Clipboard.SetImage(previewImage.Image);
+            imageToolTip.Show("Image Copied!", Application.OpenForms[Application.OpenForms.Count - 1], 3000);
         }
     }
 }
