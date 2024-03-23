@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static _32DNoiseGen.NoiseLayer;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace _32DNoiseGen
 {
@@ -126,8 +122,26 @@ namespace _32DNoiseGen
                 {
                     using (FileStream stream = new FileStream(openDialog.FileName, FileMode.Open))
                     {
+                        noiseLayers.Clear();
+                        form.noiseList.Items.Clear();
+
                         BinaryFormatter bin = new BinaryFormatter();
-                        noiseLayers = (Dictionary<string, NoiseLayer>)bin.Deserialize(stream);
+                        SaveData data =  (SaveData)bin.Deserialize(stream);
+
+                        for(int i = 0; i < data.settings.Length; i++)
+                        {
+                            string layerName = $"Layer {i}";
+                            form.noiseList.Items.Add(layerName, true);
+                            NoiseLayer layer = new NoiseLayer(data.settings[i].noiseType)
+                            {
+                                settings = data.settings[i]
+                            };
+
+                            noiseLayers.Add(layerName, layer);
+                        }
+
+                        SelectLayer(data.settings.Length-1);
+                        UpdatePreview();
                     }
                 }
                 catch (IOException)
@@ -158,15 +172,32 @@ namespace _32DNoiseGen
                 {
                     using(FileStream stream = new FileStream(saveDialog.FileName, FileMode.Create))
                     {
-                        BinaryFormatter bin = new BinaryFormatter();
-                        bin.Serialize(stream, noiseLayers);
+                        LayerSettings[] settings = new LayerSettings[noiseLayers.Count];
 
-                        // TODO: Create noise settings class/struct and serialize it. We shouldn't be serializing fastnoise per layer anyways.
+                        int i = 0;
+                        foreach(KeyValuePair<string, NoiseLayer> v in noiseLayers)
+                        {
+                            settings[i++] = v.Value.settings;
+                        }
+
+                        SaveData data = new SaveData()
+                        {
+                            settings = settings
+                        };
+
+                        BinaryFormatter bin = new BinaryFormatter();
+                        bin.Serialize(stream, data);
                     }
                 } catch (IOException)
                 {
                 }
             }
+        }
+
+        [Serializable]
+        struct SaveData
+        {
+            public LayerSettings[] settings;
         }
 
         private static void SeedChanged(object sender, EventArgs e)
@@ -175,7 +206,7 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.seed = (int)form.seed.Value;
+            currentLayer.settings.seed = (int)form.seed.Value;
             UpdatePreview();
         }
 
@@ -215,8 +246,8 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.useFBM = form.FBM.Checked;
-            currentLayer.SetNoiseType(currentLayer.noiseType);
+            currentLayer.settings.useFBM = form.FBM.Checked;
+            currentLayer.SetNoiseType(currentLayer.settings.noiseType);
             UpdateNoiseControls(true);
             UpdatePreview();
         }
@@ -227,7 +258,7 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.absolute = form.absolute.Checked;
+            currentLayer.settings.absolute = form.absolute.Checked;
             UpdatePreview();
         }
 
@@ -237,7 +268,7 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.oneMinus = form.oneMinus.Checked;
+            currentLayer.settings.oneMinus = form.oneMinus.Checked;
             UpdatePreview();
         }
 
@@ -247,7 +278,7 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.inverted = form.inverted.Checked;
+            currentLayer.settings.inverted = form.inverted.Checked;
             UpdatePreview();
         }
 
@@ -257,7 +288,7 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.frequency = (float)form.frequency.Value;
+            currentLayer.settings.frequency = (float)form.frequency.Value;
             UpdatePreview();
         }
 
@@ -267,7 +298,7 @@ namespace _32DNoiseGen
             if (currentLayer == null)
                 return;
 
-            currentLayer.amplitude = (float)form.amplitude.Value;
+            currentLayer.settings.amplitude = (float)form.amplitude.Value;
             UpdatePreview();
         }
 
@@ -280,7 +311,7 @@ namespace _32DNoiseGen
 
             string layerName = form.noiseList.Items[index].ToString();
 
-            noiseLayers[layerName].combineType = (CombineType)form.combineType.SelectedItem;
+            noiseLayers[layerName].settings.combineType = (CombineType)form.combineType.SelectedItem;
 
             UpdatePreview();
         }
@@ -348,18 +379,18 @@ namespace _32DNoiseGen
             if (enabled)
             {
                 NoiseLayer activeLayer = GetActiveLayer();
-                form.noiseType.Text = activeLayer.noiseType;
-                form.combineType.Text = activeLayer.combineType.ToString();
-                form.amplitude.Value = (decimal)activeLayer.amplitude;
-                form.frequency.Value = (decimal)activeLayer.frequency;
-                form.inverted.Checked = activeLayer.inverted;
-                form.oneMinus.Checked = activeLayer.oneMinus;
-                form.absolute.Checked = activeLayer.absolute;
-                form.FBM.Checked = activeLayer.useFBM;
-                form.FBMGain.Value = (decimal)activeLayer.FBMGain;
-                form.FBMLacunarity.Value = (decimal)activeLayer.FBMLacunarity;
-                form.FBMOctaves.Value = activeLayer.FBMOctaves;
-                form.seed.Value = activeLayer.seed;
+                form.noiseType.Text = activeLayer.settings.noiseType;
+                form.combineType.Text = activeLayer.settings.combineType.ToString();
+                form.amplitude.Value = (decimal)activeLayer.settings.amplitude;
+                form.frequency.Value = (decimal)activeLayer.settings.frequency;
+                form.inverted.Checked = activeLayer.settings.inverted;
+                form.oneMinus.Checked = activeLayer.settings.oneMinus;
+                form.absolute.Checked = activeLayer.settings.absolute;
+                form.FBM.Checked = activeLayer.settings.useFBM;
+                form.FBMGain.Value = (decimal)activeLayer.settings.FBMGain;
+                form.FBMLacunarity.Value = (decimal)activeLayer.settings.FBMLacunarity;
+                form.FBMOctaves.Value = activeLayer.settings.FBMOctaves;
+                form.seed.Value = activeLayer.settings.seed;
 
                 if (!form.FBM.Checked)
                 {

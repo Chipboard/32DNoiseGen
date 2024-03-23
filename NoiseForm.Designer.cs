@@ -119,7 +119,7 @@
             // 
             this.previewImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.previewImage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.previewImage.Image = global::_32DNoiseGen.Properties.Resources.PreviewGrid;
+            this.previewImage.ErrorImage = null;
             this.previewImage.Location = new System.Drawing.Point(157, 35);
             this.previewImage.Name = "previewImage";
             this.previewImage.Size = new System.Drawing.Size(428, 428);

@@ -5,88 +5,74 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static _32DNoiseGen.NoiseLayer;
 
 namespace _32DNoiseGen
 {
-    [Serializable]
     public class NoiseLayer
     {
-        public bool enabled;
-        public bool inverted;
-        public bool oneMinus;
-        public bool absolute;
-        public bool useFBM;
-
-        public string noiseType;
-        public CombineType combineType;
-        public float amplitude;
-        public float frequency;
-        public float FBMGain { get; private set; }
-        public float FBMLacunarity { get; private set; }
-        public int FBMOctaves { get; private set; }
-        public int seed;
-
+        public LayerSettings settings;
         FastNoise noise;
 
         public NoiseLayer(string noiseType = "Perlin", float frequency = 0.01f, float amplitude = 1.0f)
         {
-            this.amplitude = amplitude;
-            this.frequency = frequency;
+            settings.amplitude = amplitude;
+            settings.frequency = frequency;
 
-            seed = Program.random.Next(int.MinValue, int.MaxValue);
-            enabled = true;
-            FBMGain = 0.4f;
-            FBMLacunarity = 3.0f;
-            FBMOctaves = 8;
+            settings.seed = Program.random.Next(int.MinValue, int.MaxValue);
+            settings.enabled = true;
+            settings.FBMGain = 0.4f;
+            settings.FBMLacunarity = 3.0f;
+            settings.FBMOctaves = 8;
 
             SetNoiseType(noiseType);
         }
 
         public void SetGain(float gain)
         {
-            FBMGain = gain;
+            settings.FBMGain = gain;
 
-            if(useFBM)
-                noise.Set("Gain", FBMGain);
+            if(settings.useFBM)
+                noise.Set("Gain", settings.FBMGain);
         }
 
         public void SetLacunarity(float lacunarity)
         {
-            FBMLacunarity = lacunarity;
+            settings.FBMLacunarity = lacunarity;
 
-            if (useFBM)
-                noise.Set("Lacunarity", FBMLacunarity);
+            if (settings.useFBM)
+                noise.Set("Lacunarity", settings.FBMLacunarity);
         }
 
         public void SetOctaves(int octaves)
         {
-            FBMOctaves = octaves;
+            settings.FBMOctaves = octaves;
 
-            if (useFBM)
-                noise.Set("Octaves", FBMOctaves);
+            if (settings.useFBM)
+                noise.Set("Octaves", settings.FBMOctaves);
         }
 
         public void SetNoiseType(string noiseType)
         {
-            this.noiseType = noiseType;
+            settings.noiseType = noiseType;
 
-            if (!useFBM)
+            if (!settings.useFBM)
             {
                 noise = new FastNoise(noiseType);
             } else
             {
                 noise = new FastNoise("FractalFBm");
                 noise.Set("Source", new FastNoise(noiseType));
-                noise.Set("Gain", FBMGain);
-                noise.Set("Lacunarity", FBMLacunarity);
-                noise.Set("Octaves", FBMOctaves);
+                noise.Set("Gain", settings.FBMGain);
+                noise.Set("Lacunarity", settings.FBMLacunarity);
+                noise.Set("Octaves", settings.FBMOctaves);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GetNoise3D(ref float[] array, int xStart, int yStart, int zStart, int xSize, int ySize, int zSize)
         {
-            noise.GenUniformGrid3D(array, xStart, yStart, zStart, xSize, ySize, zSize, frequency, seed);
+            noise.GenUniformGrid3D(array, xStart, yStart, zStart, xSize, ySize, zSize, settings.frequency, settings.seed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -94,18 +80,18 @@ namespace _32DNoiseGen
         {
             for (int i = 0; i < outArray.Length; i++)
             {
-                if(oneMinus)
+                if(settings.oneMinus)
                     combine[i] = 1.0f - combine[i];
 
-                if(absolute)
+                if(settings.absolute)
                     combine[i] = Math.Abs(combine[i]);
 
-                if (!inverted)
-                    combine[i] *= amplitude;
+                if (!settings.inverted)
+                    combine[i] *= settings.amplitude;
                 else
-                    combine[i] *= -amplitude;
+                    combine[i] *= -settings.amplitude;
 
-                switch (combineType)
+                switch (settings.combineType)
                 {
                     case CombineType.Add:
                         outArray[i] += combine[i];
@@ -155,5 +141,24 @@ namespace _32DNoiseGen
             Min,
             Max
         }
+    }
+
+    [Serializable]
+    public struct LayerSettings
+    {
+        public bool enabled;
+        public bool inverted;
+        public bool oneMinus;
+        public bool absolute;
+        public bool useFBM;
+
+        public string noiseType;
+        public CombineType combineType;
+        public float amplitude;
+        public float frequency;
+        public float FBMGain;
+        public float FBMLacunarity;
+        public int FBMOctaves;
+        public int seed;
     }
 }
