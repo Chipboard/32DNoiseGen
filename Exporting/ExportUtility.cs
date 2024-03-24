@@ -13,27 +13,31 @@ namespace _32DNoiseGen.Exporting
             switch(format)
             {
                 case ExportFormat.Atlas:
-
+                    FormatData_Atlas atlasProperties = (FormatData_Atlas)properties;
                     break;
 
                 case ExportFormat.Sequence:
-
+                    FormatData_Sequence sequenceProperties = (FormatData_Sequence)properties;
                     break;
             }
         }
 
         public static object GetPropertyInstance(this ExportFormat format)
         {
+            IFormatData data = null;
+
             switch (format)
             {
                 case ExportFormat.Atlas:
-                    return new ExportFormat_Atlas();
+                    data = new FormatData_Atlas();
+                    break;
 
                 case ExportFormat.Sequence:
-                    return new ExportFormat_Sequence();
+                    data = new FormatData_Sequence();
+                    break;
             }
 
-            throw new NotImplementedException();
+            return data;
         }
 
         public enum ExportFormat

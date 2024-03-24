@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _32DNoiseGen.IO;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -152,25 +153,13 @@ namespace _32DNoiseGen
 
         private static void Save(object sender, EventArgs e)
         {
-            SaveFileDialog saveDialog = new SaveFileDialog
-            {
-                InitialDirectory = Application.ExecutablePath,
-                Title = "Save Layers",
+            string savePath = IOUtility.SaveDialog("32D");
 
-                CheckFileExists = false,
-                CheckPathExists = true,
-
-                DefaultExt = "txt",
-                Filter = "32D files (*.32D)|*.32D",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
-
-            if (saveDialog.ShowDialog() == DialogResult.OK)
+            if (savePath != null)
             {
                 try
                 {
-                    using(FileStream stream = new FileStream(saveDialog.FileName, FileMode.Create))
+                    using(FileStream stream = new FileStream(savePath, FileMode.Create))
                     {
                         LayerSettings[] settings = new LayerSettings[noiseLayers.Count];
 

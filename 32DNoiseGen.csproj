@@ -96,6 +96,7 @@
     <Compile Include="Exporting\ExportClasses.cs" />
     <Compile Include="Exporting\ExportUtility.cs" />
     <Compile Include="FastNoise2.cs" />
+    <Compile Include="IO\IOUtility.cs" />
     <Compile Include="NoiseForm.cs">
       <SubType>Form</SubType>
     </Compile>
