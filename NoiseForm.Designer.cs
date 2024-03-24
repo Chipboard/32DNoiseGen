@@ -127,7 +127,7 @@
             this.previewImage.TabIndex = 4;
             this.previewImage.TabStop = false;
             this.previewImage.WaitOnLoad = true;
-            this.previewImage.Click += new System.EventHandler(this.previewImage_Click);
+            this.previewImage.Click += new System.EventHandler(this.PreviewImage_Click);
             // 
             // previewDepthBar
             // 

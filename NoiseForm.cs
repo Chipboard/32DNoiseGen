@@ -36,7 +36,7 @@ namespace _32DNoiseGen
             imageToolTip.SetToolTip(previewImage, "Click to copy");
         }
 
-        private void previewImage_Click(object sender, EventArgs e)
+        private void PreviewImage_Click(object sender, EventArgs e)
         {
             Clipboard.SetImage(previewImage.Image);
             imageToolTip.Show("Image Copied!", Application.OpenForms[Application.OpenForms.Count - 1], 3000);

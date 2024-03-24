@@ -18,7 +18,7 @@ namespace _32DNoiseGen
 
         const int previewResolution = 512;
 
-        static Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
+        public static Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
 
         public static Random random = new Random();
 
@@ -45,7 +45,7 @@ namespace _32DNoiseGen
             form.FBMGain.ValueChanged += FBMGainChanged;
             form.FBMLacunarity.ValueChanged += FBMLacunarityChanged;
             form.FBMOctaves.ValueChanged += FBMOctavesChanged;
-            form.tilingMode.SelectedValueChanged += tilingModechanged;
+            form.tilingMode.SelectedValueChanged += TilingModechanged;
             form.strip_save.Click += Save;
             form.strip_load.Click += Load;
             form.strip_export.Click += Export;
@@ -88,7 +88,7 @@ namespace _32DNoiseGen
             Application.Run(form);
         }
 
-        private static void tilingModechanged(object sender, EventArgs e)
+        private static void TilingModechanged(object sender, EventArgs e)
         {
             UpdatePreview();
         }
