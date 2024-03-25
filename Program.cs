@@ -14,7 +14,7 @@ namespace _32DNoiseGen
     internal static class Program
     {
         static NoiseForm form;
-        static Export_Form exportForm;
+        static ExportForm exportForm;
         static Bitmap previewImage;
 
         const int previewResolution = 512;
@@ -97,7 +97,7 @@ namespace _32DNoiseGen
         private static void Export(object sender, EventArgs e)
         {
             exportForm?.Close();
-            exportForm = new Export_Form();
+            exportForm = new ExportForm();
             exportForm.Show();
         }
 
@@ -512,12 +512,31 @@ namespace _32DNoiseGen
         /// <param name="zStart"></param>
         /// <param name="zCount"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GetNoise(ref float[] data, NoiseLayer noiseLayer, int zStart, int zCount = 1)
+        private static void GetLayerNoise(ref float[] data, NoiseLayer noiseLayer, int resolution, int zStart, int zCount = 1)
         {
-            float[] noiseData = new float[previewResolution * previewResolution];
-            noiseLayer.GetNoise3D(ref noiseData, 0, 0, zStart, previewResolution, previewResolution, zCount);
+            float[] noiseData = new float[resolution * resolution];
+            noiseLayer.GetNoise3D(ref noiseData, zStart, resolution, zCount);
             noiseLayer.CombineNoise(ref data, noiseData);
-        } 
+        }
+
+        public static float[] GetTotalNoise(int zPos, int resolution)
+        {
+            float[] noiseTotal = new float[resolution * resolution];
+
+            int index = 0;
+            foreach (KeyValuePair<string, NoiseLayer> v in noiseLayers)
+            {
+                if (form.noiseList.GetItemChecked(index++))
+                {
+                    GetLayerNoise(ref noiseTotal, v.Value, resolution, zPos);
+                }
+            }
+
+            if (form.tilingMode.SelectedItem.ToString() != "None")
+                noiseTotal = ApplyTiling(noiseTotal);
+
+            return noiseTotal;
+        }
 
         /// <summary>
         /// Updates the preview image for the current noise setup.
@@ -532,19 +551,7 @@ namespace _32DNoiseGen
 
             float depthScrollFactor = (float)form.previewDepthBar.Value / form.previewDepthBar.Maximum;
             int zStart = (int)Math.Round(depthScrollFactor * previewResolution);
-
-            float[] noiseTotal = new float[previewResolution * previewResolution];
-            int index = 0;
-            foreach (KeyValuePair<string, NoiseLayer> v in noiseLayers)
-            {
-                if (form.noiseList.GetItemChecked(index++))
-                {
-                    GetNoise(ref noiseTotal, v.Value, zStart);
-                }
-            }
-
-            if(form.tilingMode.SelectedItem.ToString() != "None")
-                noiseTotal = ApplyTiling(noiseTotal);
+            float[] noiseTotal = GetTotalNoise(zStart, previewResolution);
 
             /*MessageBox.Show(noiseData[256 * 256].ToString());
             for(int x = 0; x < previewResolution; x++)
@@ -556,60 +563,9 @@ namespace _32DNoiseGen
                 }
             }*/
 
-            SetGrayscaleBitmap(noiseTotal, previewImage);
+            previewImage.SetGrayscaleBitmap(noiseTotal, 0, 0, previewResolution, previewResolution);
             form.previewImage.Image = previewImage;
             form.previewImage.Update();
-        }
-
-        /// <summary>
-        /// Sets a bitmap from float[] 0.0 - 1.0 grayscale data.
-        /// </summary>
-        /// <param name="grayscaleData"></param>
-        /// <param name="bitmap"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void SetGrayscaleBitmap(float[] grayscaleData, Bitmap bitmap)
-        {
-            // Lock the bitmap bits for direct access
-            BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
-
-            // Calculate bytes per pixel
-            int bytesPerPixel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
-
-            // Get the stride
-            int stride = bmpData.Stride;
-
-            unsafe
-            {
-                byte* ptr = (byte*)bmpData.Scan0;
-
-                // Iterate over each row and column
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        float grayscaleValue = grayscaleData[y * bitmap.Width + x];
-
-                        if(grayscaleValue < 0)
-                            grayscaleValue = 0;
-                        if (grayscaleValue > 1.0f)
-                            grayscaleValue = 1.0f;
-
-                        byte gray = (byte)(grayscaleValue * 255); // Convert float value to byte
-
-                        // Set pixel values
-                        ptr[x * bytesPerPixel] = gray; // Blue channel
-                        ptr[x * bytesPerPixel + 1] = gray; // Green channel
-                        ptr[x * bytesPerPixel + 2] = gray; // Red channel
-                        ptr[x * bytesPerPixel + 3] = 255; // Alpha channel
-                    }
-
-                    // Move to the next row
-                    ptr += stride;
-                }
-            }
-
-            // Unlock the bitmap
-            bitmap.UnlockBits(bmpData);
         }
     }
 }

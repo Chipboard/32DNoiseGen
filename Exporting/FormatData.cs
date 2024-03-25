@@ -9,6 +9,9 @@ namespace _32DNoiseGen.Exporting
 {
     public struct FormatData_Atlas : IFormatData
     {
+        [Category("Settings"), Description("File name")]
+        public string FileName { get; set; }
+
         [Category("Settings"), Description("Resolution (per-side) of each atlas square")]
         public int Resolution { get; set; }
 
@@ -20,6 +23,7 @@ namespace _32DNoiseGen.Exporting
         {
             if(!hasInitialized)
             {
+                FileName = "Export";
                 Resolution = 128;
                 Slices = 128;
 
@@ -32,6 +36,9 @@ namespace _32DNoiseGen.Exporting
 
     public struct FormatData_Sequence : IFormatData
     {
+        [Category("Settings"), Description("File name")]
+        public string FileName { get; set; }
+
         [Category("Settings"), Description("Resolution (per-side) of each sequence image")]
         public int Resolution { get; set; }
 
@@ -43,6 +50,7 @@ namespace _32DNoiseGen.Exporting
         {
             if (!hasInitialized)
             {
+                FileName = "Export";
                 Resolution = 128;
                 Slices = 128;
 

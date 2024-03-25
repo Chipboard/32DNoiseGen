@@ -87,13 +87,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Export Form.cs">
+    <Compile Include="BitmapUtility.cs" />
+    <Compile Include="ExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Export Form.Designer.cs">
-      <DependentUpon>Export Form.cs</DependentUpon>
+    <Compile Include="ExportForm.Designer.cs">
+      <DependentUpon>ExportForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Exporting\ExportClasses.cs" />
+    <Compile Include="Exporting\FormatData.cs" />
     <Compile Include="Exporting\ExportUtility.cs" />
     <Compile Include="FastNoise2.cs" />
     <Compile Include="IO\IOUtility.cs" />
@@ -106,8 +107,8 @@
     <Compile Include="NoiseLayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Export Form.resx">
-      <DependentUpon>Export Form.cs</DependentUpon>
+    <EmbeddedResource Include="ExportForm.resx">
+      <DependentUpon>ExportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NoiseForm.resx">
       <DependentUpon>NoiseForm.cs</DependentUpon>

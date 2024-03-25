@@ -1,6 +1,6 @@
 ﻿namespace _32DNoiseGen
 {
-    partial class Export_Form
+    partial class ExportForm
     {
         /// <summary>
         /// Required designer variable.

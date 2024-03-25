@@ -12,9 +12,9 @@ using static _32DNoiseGen.Exporting.ExportUtility;
 
 namespace _32DNoiseGen
 {
-    public partial class Export_Form : Form
+    public partial class ExportForm : Form
     {
-        public Export_Form()
+        public ExportForm()
         {
             InitializeComponent();
         }

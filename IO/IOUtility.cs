@@ -31,9 +31,40 @@ namespace _32DNoiseGen.IO
             if (result == DialogResult.OK)
             {
                 return saveDialog.FileName;
-            } else
+            }
+            else
             {
-                if(result != DialogResult.Cancel)
+                if (result != DialogResult.Cancel)
+                    MessageBox.Show($"SaveDialog failure! {result}");
+
+                return null;
+            }
+        }
+
+        public static string FolderDialog()
+        {
+            SaveFileDialog folderDialog = new SaveFileDialog
+            {
+                InitialDirectory = Application.ExecutablePath,
+                Title = "Save Layers",
+
+                CheckFileExists = false,
+                CheckPathExists = true,
+
+                FileName = "Save Here",
+                Filter = "Directory | directory",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
+
+            DialogResult result = folderDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                return Path.GetDirectoryName(folderDialog.FileName);
+            }
+            else
+            {
+                if (result != DialogResult.Cancel)
                     MessageBox.Show($"SaveDialog failure! {result}");
 
                 return null;
