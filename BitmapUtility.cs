@@ -12,8 +12,12 @@ namespace _32DNoiseGen
     {
         public static void SetGrayscaleBitmap(this Bitmap bitmap, float[] grayscaleData, int startX, int startY, int endX, int endY)
         {
+            // Width and height of region
+            int width = endX - startX;
+            int height = endY - startY;
+
             // Lock the bitmap bits for direct access
-            BitmapData bmpData = bitmap.LockBits(new Rectangle(startX, startY, endX, endY), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+            BitmapData bmpData = bitmap.LockBits(new Rectangle(startX, startY, width, height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
 
             // Calculate bytes per pixel
             int bytesPerPixel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
@@ -30,7 +34,8 @@ namespace _32DNoiseGen
                 {
                     for (int x = startX; x < endX; x++)
                     {
-                        float grayscaleValue = grayscaleData[y * bitmap.Width + x];
+                        // Get value from the start of the texture to the width
+                        float grayscaleValue = grayscaleData[(y - startY) * width + (x - startX)];
 
                         if (grayscaleValue < 0)
                             grayscaleValue = 0;

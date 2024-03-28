@@ -24,18 +24,57 @@ namespace _32DNoiseGen.Exporting
                 case ExportFormat.Atlas:
                     FormatData_Atlas atlasProperties = (FormatData_Atlas)properties;
 
+                    int columnCount = (int)Math.Floor(Math.Sqrt(atlasProperties.Slices));
+                    int rowCount = (int)Math.Ceiling((double)atlasProperties.Slices / columnCount);
+
+                    int imageWidth = columnCount * atlasProperties.Resolution;
+                    int imageHeight = rowCount * atlasProperties.Resolution;
+
+                    Bitmap atlasBitmap = new Bitmap(imageWidth, imageHeight);
+                    Bitmap currentBitmap = new Bitmap(atlasProperties.Resolution, atlasProperties.Resolution);
+
+                    using (Graphics g = Graphics.FromImage(atlasBitmap))
+                    {
+                        int column = 0;
+                        int row = 0;
+                        for (int i = 0; i < atlasProperties.Slices; i++)
+                        {
+                            if (column == columnCount)
+                            {
+                                column = 0;
+                                row++;
+                            }
+
+                            int x = column * atlasProperties.Resolution;
+                            int y = row * atlasProperties.Resolution;
+
+                            float interp = (float)i / (atlasProperties.Slices - 1);
+                            int slice = (int)Math.Round(interp * (atlasProperties.Resolution - 1));
+
+                            currentBitmap.SetGrayscaleBitmap(
+                                Program.GetTotalNoise(slice, atlasProperties.Resolution),
+                                0,
+                                0,
+                                atlasProperties.Resolution, atlasProperties.Resolution);
+
+                            g.DrawImage(currentBitmap, new Rectangle(x, y, atlasProperties.Resolution, atlasProperties.Resolution));
+                            column++;
+                        }
+                    }
+
+                    atlasBitmap.Save($"{folderPath}/{atlasProperties.FileName}.png", ImageFormat.Png);
                     break;
 
                 case ExportFormat.Sequence:
                     FormatData_Sequence sequenceProperties = (FormatData_Sequence)properties;
 
-                    Bitmap bitmap = new Bitmap(sequenceProperties.Resolution, sequenceProperties.Resolution);
+                    Bitmap sequenceBitmap = new Bitmap(sequenceProperties.Resolution, sequenceProperties.Resolution);
                     for (int i = 0; i < sequenceProperties.Slices; i++)
                     {
                         float interp = (float)i / sequenceProperties.Slices;
                         int slice = (int)Math.Ceiling(interp * sequenceProperties.Resolution);
-                        bitmap.SetGrayscaleBitmap(Program.GetTotalNoise(slice, sequenceProperties.Resolution), 0, 0, sequenceProperties.Resolution, sequenceProperties.Resolution);
-                        bitmap.Save($"{folderPath}/{sequenceProperties.FileName}{i:D4}.png", ImageFormat.Png);
+                        sequenceBitmap.SetGrayscaleBitmap(Program.GetTotalNoise(slice, sequenceProperties.Resolution), 0, 0, sequenceProperties.Resolution, sequenceProperties.Resolution);
+                        sequenceBitmap.Save($"{folderPath}/{sequenceProperties.FileName}{i:D4}.png", ImageFormat.Png);
                     }
                     break;
             }
