@@ -24,8 +24,8 @@ namespace _32DNoiseGen.Exporting
             if(!hasInitialized)
             {
                 FileName = "Export";
-                Resolution = 128;
-                Slices = 128;
+                Resolution = 400;
+                Slices = 400;
 
                 hasInitialized = true;
             }
@@ -51,8 +51,8 @@ namespace _32DNoiseGen.Exporting
             if (!hasInitialized)
             {
                 FileName = "Export";
-                Resolution = 128;
-                Slices = 128;
+                Resolution = 400;
+                Slices = 400;
 
                 hasInitialized = true;
             }
