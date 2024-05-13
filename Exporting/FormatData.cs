@@ -15,8 +15,14 @@ namespace _32DNoiseGen.Exporting
         [Category("Settings"), Description("Resolution (per-side) of each atlas square")]
         public int Resolution { get; set; }
 
-        [Category("Settings"), Description("How many slices to cover on the z-axis")]
-        public int Slices { get; set; }
+        [Category("Settings"), Description("The number of z slices to cover")]
+        public int SliceCount { get; set; }
+
+        [Category("Settings"), Description("The beginning range of z slices to cover")]
+        public int SliceStart { get; set; }
+
+        [Category("Settings"), Description("The ending range of z slices to cover")]
+        public int SliceEnd { get; set; }
 
         bool hasInitialized;
         public bool Validate()
@@ -25,7 +31,9 @@ namespace _32DNoiseGen.Exporting
             {
                 FileName = "Export";
                 Resolution = 400;
-                Slices = 400;
+                SliceCount = 400;
+                SliceStart = 0;
+                SliceEnd = 400;
 
                 hasInitialized = true;
             }
@@ -42,8 +50,14 @@ namespace _32DNoiseGen.Exporting
         [Category("Settings"), Description("Resolution (per-side) of each sequence image")]
         public int Resolution { get; set; }
 
-        [Category("Settings"), Description("How many slices to cover on the z-axis")]
-        public int Slices { get; set; }
+        [Category("Settings"), Description("The number of z slices to cover")]
+        public int SliceCount { get; set; }
+
+        [Category("Settings"), Description("The beginning range of z slices to cover")]
+        public int SliceStart { get; set; }
+
+        [Category("Settings"), Description("The ending range of z slices to cover")]
+        public int SliceEnd { get; set; }
 
         bool hasInitialized;
         public bool Validate()
@@ -52,7 +66,9 @@ namespace _32DNoiseGen.Exporting
             {
                 FileName = "Export";
                 Resolution = 400;
-                Slices = 400;
+                SliceCount = 400;
+                SliceStart = 0;
+                SliceEnd = 400;
 
                 hasInitialized = true;
             }

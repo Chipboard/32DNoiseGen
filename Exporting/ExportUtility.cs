@@ -24,8 +24,9 @@ namespace _32DNoiseGen.Exporting
                 case ExportFormat.Atlas:
                     FormatData_Atlas atlasProperties = (FormatData_Atlas)properties;
 
-                    int columnCount = (int)Math.Floor(Math.Sqrt(atlasProperties.Slices));
-                    int rowCount = (int)Math.Ceiling((double)atlasProperties.Slices / columnCount);
+                    int sliceCount = Math.Abs(atlasProperties.SliceEnd - atlasProperties.SliceStart);;
+                    int columnCount = (int)Math.Floor(Math.Sqrt(atlasProperties.SliceCount));
+                    int rowCount = (int)Math.Ceiling((double)atlasProperties.SliceCount / columnCount);
 
                     int imageWidth = columnCount * atlasProperties.Resolution;
                     int imageHeight = rowCount * atlasProperties.Resolution;
@@ -37,7 +38,7 @@ namespace _32DNoiseGen.Exporting
                     {
                         int column = 0;
                         int row = 0;
-                        for (int i = 0; i < atlasProperties.Slices; i++)
+                        for (int i = 0; i < atlasProperties.SliceCount; i++)
                         {
                             if (column == columnCount)
                             {
@@ -48,8 +49,8 @@ namespace _32DNoiseGen.Exporting
                             int x = column * atlasProperties.Resolution;
                             int y = row * atlasProperties.Resolution;
 
-                            float interp = (float)i / (atlasProperties.Slices - 1);
-                            int slice = (int)Math.Round(interp * (atlasProperties.Resolution - 1));
+                            float interp = (float)i / (sliceCount - 1);
+                            int slice = (int)Math.Round(Lerp(atlasProperties.SliceStart, atlasProperties.SliceEnd, interp));
 
                             currentBitmap.SetGrayscaleBitmap(
                                 Program.GetTotalNoise(slice, atlasProperties.Resolution),
@@ -68,11 +69,13 @@ namespace _32DNoiseGen.Exporting
                 case ExportFormat.Sequence:
                     FormatData_Sequence sequenceProperties = (FormatData_Sequence)properties;
 
+                    int sequenceSliceCount = Math.Abs(sequenceProperties.SliceEnd - sequenceProperties.SliceStart);
                     Bitmap sequenceBitmap = new Bitmap(sequenceProperties.Resolution, sequenceProperties.Resolution);
-                    for (int i = 0; i < sequenceProperties.Slices; i++)
+                    for (int i = 0; i < sequenceProperties.SliceCount; i++)
                     {
-                        float interp = (float)i / sequenceProperties.Slices;
-                        int slice = (int)Math.Ceiling(interp * sequenceProperties.Resolution);
+                        float interp = (float)i / sequenceSliceCount;
+                        int slice = (int)Math.Ceiling(Lerp(sequenceProperties.SliceStart, sequenceProperties.SliceEnd, interp));
+
                         sequenceBitmap.SetGrayscaleBitmap(Program.GetTotalNoise(slice, sequenceProperties.Resolution), 0, 0, sequenceProperties.Resolution, sequenceProperties.Resolution);
                         sequenceBitmap.Save($"{folderPath}/{sequenceProperties.FileName}{i:D4}.png", ImageFormat.Png);
                     }
@@ -97,6 +100,11 @@ namespace _32DNoiseGen.Exporting
 
             data.Validate();
             return data;
+        }
+
+        static float Lerp(float firstFloat, float secondFloat, float by)
+        {
+            return firstFloat * (1 - by) + secondFloat * by;
         }
 
         public enum ExportFormat

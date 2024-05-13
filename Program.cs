@@ -141,7 +141,10 @@ namespace _32DNoiseGen
                             noiseLayers.Add(layerName, layer);
                         }
 
-                        SelectLayer(data.settings.Length-1);
+                        for (int i = 0; i < data.settings.Length; i++)
+                        {
+                            SelectLayer(i);
+                        }
                         UpdatePreview();
                     }
                 }
