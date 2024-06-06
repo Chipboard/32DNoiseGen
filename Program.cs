@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static _32DNoiseGen.NoiseLayer;
 
@@ -17,7 +18,7 @@ namespace _32DNoiseGen
         static ExportForm exportForm;
         static Bitmap previewImage;
 
-        const int previewResolution = 512;
+        const int previewResolution = 256;
 
         public static Dictionary<string, NoiseLayer> noiseLayers = new Dictionary<string, NoiseLayer>();
 
@@ -66,9 +67,11 @@ namespace _32DNoiseGen
             form.tilingMode.Items.AddRange(new string[]
             {
                 "None",
+                "Center Edge Blend",
                 "Mirrored Edge (Round)",
                 "Mirrored Edge (Square)",
-                "Mirrored"
+                "Mirrored",
+                //"Scattered Edges" //needs improved, bugged
             });
 
             form.tilingMode.SelectedIndex = 0;
@@ -424,16 +427,105 @@ namespace _32DNoiseGen
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static float[] ApplyTiling(float[] data)
+        private static float[] ApplyTiling(float[] data, string tilingMode = "")
         {
             float[] result = new float[data.Length];
             int resolution = (int)Math.Sqrt(data.Length);
             int halfResolution = resolution / 2;
 
-            switch (form.tilingMode.SelectedItem.ToString())
+            if (tilingMode == "")
+                tilingMode = form.tilingMode.SelectedItem.ToString();
+
+            switch (tilingMode)
             {
+                case "Center Edge Blend":
+                    // Tile the center texture
+                    float[] tiledData = ApplyTiling(data, "Mirrored Edge (Round)");
+
+                    // Constants for blending
+                    float blendRadius = halfResolution; // Radius for blending effect
+
+                    Parallel.For(0, resolution, x =>
+                    {
+                        for (int y = 0; y < resolution; y++)
+                        {
+                            int currentIndex = y * resolution + x;
+
+                            float edgeDistance = Math.Max(Math.Max((float)x / resolution, (float)y / resolution),
+                                Math.Max(1.0f - ((float)x / resolution), 1.0f - ((float)y / resolution)));
+
+                            // Calculate distance from the closest edge
+                            int dx = Math.Min(x, resolution - 1 - x);
+                            int dy = Math.Min(y, resolution - 1 - y);
+                            int minDistance = Math.Min(dx, dy);
+
+                            // Calculate blend factor based on distance from edge
+                            float blendFactor = 1.0f - (minDistance / blendRadius);
+
+                            int firstSampleX = x - halfResolution;
+                            int firstSampleY = y - halfResolution;
+
+                            if (firstSampleX < 0) firstSampleX += resolution;
+                            if (firstSampleY < 0) firstSampleY += resolution;
+
+                            float firstSample = tiledData[firstSampleX * resolution + firstSampleY];
+
+                            int secondSampleX = x - halfResolution;
+                            int secondSampleY = y - halfResolution;
+
+                            if (secondSampleX < 0) secondSampleX += resolution;
+                            if (secondSampleY < 0) secondSampleY += resolution;
+
+                            float secondSample = tiledData[secondSampleY * resolution + secondSampleX];
+
+                            float blendValue = (firstSample + secondSample) * 0.5f;
+
+                            result[currentIndex] = Lerp(data[currentIndex], blendValue, (float)Math.Pow(blendFactor, 4));
+                        }
+                    });
+                    break;
+
+
+                case "Scattered Edges":
+                    Random random = new Random();
+
+                    Parallel.For(0, resolution, x =>
+                    {
+                        for (int y = 0; y < resolution; y++)
+                        {
+                            int currentIndex = y * resolution + x;
+
+                            // Calculate distance from the closest edge
+                            int dx = Math.Min(x, resolution - 1 - x);
+                            int dy = Math.Min(y, resolution - 1 - y);
+                            int minDistance = Math.Min(dx, dy);
+
+                            // Calculate blend factor based on inverse distance from edge
+                            float blendFactor = 1.0f - ((float)minDistance / halfResolution);
+
+                            // Randomly sample a pixel from the edges
+                            int edgeX = random.Next(resolution);
+                            int edgeY;
+                            if (random.Next(2) == 0)
+                            {
+                                edgeY = random.Next(2) == 0 ? 0 : resolution - 1;
+                            }
+                            else
+                            {
+                                edgeX = random.Next(2) == 0 ? 0 : resolution - 1;
+                                edgeY = random.Next(resolution);
+                            }
+
+                            int edgeIndex = edgeY * resolution + edgeX;
+
+                            // Blend the current pixel with the randomly sampled edge pixel
+                            result[currentIndex] = Lerp(data[currentIndex], data[edgeIndex], blendFactor);
+                        }
+                    });
+                    break;
+
                 case "Mirrored Edge (Round)":
-                    for (int x = 0; x < resolution; x++)
+                    Parallel.For(0, resolution, x =>
                     {
                         for (int y = 0; y < resolution; y++)
                         {
@@ -457,11 +549,11 @@ namespace _32DNoiseGen
 
                             result[currentIndex] = Lerp(data[currentIndex], data[oppositeIndex], blendFactor);
                         }
-                    }
+                    });
                     break;
 
                 case "Mirrored Edge (Square)":
-                    for (int x = 0; x < resolution; x++)
+                    Parallel.For(0, resolution, x =>
                     {
                         for (int y = 0; y < resolution; y++)
                         {
@@ -482,11 +574,11 @@ namespace _32DNoiseGen
 
                             result[currentIndex] = Lerp(data[currentIndex], data[oppositeIndex], blendFactor);
                         }
-                    }
+                    });
                     break;
 
                 case "Mirrored":
-                    for (int x = 0; x < resolution; x++)
+                    Parallel.For(0, resolution, x =>
                     {
                         for (int y = 0; y < resolution; y++)
                         {
@@ -494,7 +586,7 @@ namespace _32DNoiseGen
                             int my = y < resolution / 2 ? y : resolution - 1 - y;
                             result[y * resolution + x] = data[(my * 2) * resolution + (mx * 2)];
                         }
-                    }
+                    });
                     break;
             }
 
@@ -515,10 +607,10 @@ namespace _32DNoiseGen
         /// <param name="zStart"></param>
         /// <param name="zCount"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GetLayerNoise(ref float[] data, NoiseLayer noiseLayer, int resolution, int zStart, int zCount = 1)
+        private static void GetLayerNoise(ref float[] data, NoiseLayer noiseLayer, int resolution, int zStart)
         {
             float[] noiseData = new float[resolution * resolution];
-            noiseLayer.GetNoise3D(ref noiseData, zStart, resolution, zCount);
+            noiseLayer.GetNoise3D(ref noiseData, zStart, resolution);
             noiseLayer.CombineNoise(ref data, noiseData);
         }
 

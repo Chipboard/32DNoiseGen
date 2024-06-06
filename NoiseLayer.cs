@@ -70,9 +70,10 @@ namespace _32DNoiseGen
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void GetNoise3D(ref float[] array, int zStart, int resolution, int zSize)
+        public void GetNoise3D(ref float[] array, int zStart, int resolution)
         {
-            noise.GenUniformGrid3D(array, 0, 0, zStart, resolution, resolution, zSize, settings.frequency * (512.0f / resolution), settings.seed);
+            float frequency = settings.frequency * (512.0f / resolution);
+            noise.GenUniformGrid3D(array, 0, 0, zStart, resolution, resolution, 1, frequency, settings.seed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
