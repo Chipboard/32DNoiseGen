@@ -440,7 +440,7 @@ namespace _32DNoiseGen
             {
                 case "Center Edge Blend":
                     // Tile the center texture
-                    float[] tiledData = ApplyTiling(data, "Mirrored Edge (Round)");
+                    float[] tiledData = ApplyTiling(data, "Mirrored Edge (Square)");
 
                     // Constants for blending
                     float blendRadius = halfResolution; // Radius for blending effect
@@ -478,7 +478,15 @@ namespace _32DNoiseGen
 
                             float secondSample = tiledData[secondSampleY * resolution + secondSampleX];
 
-                            float blendValue = (firstSample + secondSample) * 0.5f;
+                            float samplesClamped = firstSample + secondSample;
+
+                            if (samplesClamped > 1.0f)
+                                samplesClamped = 1.0f;
+                            else if (samplesClamped < 0.0f)
+                                samplesClamped = 0.0f;
+
+                            float minValue = Math.Min(Math.Min(firstSample, secondSample), tiledData[currentIndex]); // preserve brightness
+                            float blendValue = Lerp(0.0f, minValue, samplesClamped);
 
                             result[currentIndex] = Lerp(data[currentIndex], blendValue, (float)Math.Pow(blendFactor, 4));
                         }
